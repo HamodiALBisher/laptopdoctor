@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { FiHardDrive, FiMonitor, FiSave, FiWind, FiX } from 'react-icons/fi';
+import { FiHardDrive, FiMonitor, FiSave, FiWind, FiX, FiBookOpen } from 'react-icons/fi';
 
 const articles = [
   {
     key: 'ssdFailing',
     icon: FiHardDrive,
+    color: 'text-red-400',
+    bg: 'bg-red-400/10',
     content: `### Warning Signs Your SSD Is Failing
 
 1. **Frequent crashes or blue screens** - If your computer freezes or shows BSOD errors frequently, your SSD might be failing.
@@ -21,6 +23,8 @@ const articles = [
   {
     key: 'beforeBringing',
     icon: FiMonitor,
+    color: 'text-cyan-accent',
+    bg: 'bg-cyan-accent/10',
     content: `### Before Bringing Your Laptop for Repair
 
 1. **Back up important files** - Copy important documents, photos, and files to a USB drive or cloud storage.
@@ -34,6 +38,8 @@ const articles = [
   {
     key: 'backupPractices',
     icon: FiSave,
+    color: 'text-green-400',
+    bg: 'bg-green-400/10',
     content: `### The 3-2-1 Backup Rule
 
 The golden rule of data protection:
@@ -56,6 +62,8 @@ The golden rule of data protection:
   {
     key: 'overheating',
     icon: FiWind,
+    color: 'text-orange-400',
+    bg: 'bg-orange-400/10',
     content: `### Preventing Laptop Overheating
 
 #### Common Causes:
@@ -86,11 +94,14 @@ export default function Blog() {
         <meta name="description" content="Helpful guides and tips for maintaining your PC and laptop." />
       </Helmet>
 
-      <section className="pt-24 pb-20 bg-navy-900 min-h-screen">
-        <div className="max-w-4xl mx-auto px-4">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+      <section className="pt-28 pb-24 bg-navy-900 min-h-screen">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-14">
+            <div className="w-16 h-16 rounded-2xl bg-cyan-accent/10 flex items-center justify-center mx-auto mb-6">
+              <FiBookOpen className="text-cyan-accent text-3xl" />
+            </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{t('blog.title')}</h1>
-            <p className="text-gray-400 text-lg">{t('blog.subtitle')}</p>
+            <p className="text-gray-400 text-lg max-w-xl mx-auto leading-relaxed">{t('blog.subtitle')}</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,14 +112,16 @@ export default function Blog() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-2xl bg-navy-800 border border-navy-700 hover:border-gold/30 transition-all cursor-pointer group"
+                className="p-8 rounded-2xl bg-navy-800 border border-navy-700 hover:border-gold/30 transition-all cursor-pointer group hover:shadow-lg hover:shadow-gold/5"
                 onClick={() => setSelectedArticle(article)}
               >
-                <article.icon className="text-cyan-accent text-3xl mb-4 group-hover:text-gold transition-colors" />
-                <h2 className="text-xl font-semibold text-white mb-2">{t(`blog.${article.key}`)}</h2>
-                <p className="text-gray-400 text-sm mb-4">{t(`blog.${article.key}Desc`)}</p>
-                <span className="text-gold text-sm font-medium group-hover:text-gold-light transition-colors">
-                  {t('blog.readMore')} →
+                <div className={`w-14 h-14 rounded-2xl ${article.bg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform`}>
+                  <article.icon className={`${article.color} text-2xl`} />
+                </div>
+                <h2 className="text-xl font-semibold text-white mb-3 group-hover:text-gold transition-colors">{t(`blog.${article.key}`)}</h2>
+                <p className="text-gray-400 text-sm mb-5 leading-relaxed">{t(`blog.${article.key}Desc`)}</p>
+                <span className="text-gold text-sm font-semibold group-hover:text-gold-light transition-colors inline-flex items-center gap-1">
+                  {t('blog.readMore')} &rarr;
                 </span>
               </motion.div>
             ))}
@@ -119,27 +132,32 @@ export default function Blog() {
       {/* Article Modal */}
       <AnimatePresence>
         {selectedArticle && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setSelectedArticle(null)}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={() => setSelectedArticle(null)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-navy-800 rounded-2xl border border-navy-700 p-6 md:p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-navy-800 rounded-2xl border border-navy-700 p-8 md:p-10 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">{t(`blog.${selectedArticle.key}`)}</h2>
-                <button onClick={() => setSelectedArticle(null)} className="text-gray-400 hover:text-white"><FiX size={20} /></button>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-xl ${selectedArticle.bg} flex items-center justify-center`}>
+                    <selectedArticle.icon className={`${selectedArticle.color} text-xl`} />
+                  </div>
+                  <h2 className="text-xl font-bold text-white">{t(`blog.${selectedArticle.key}`)}</h2>
+                </div>
+                <button onClick={() => setSelectedArticle(null)} className="w-10 h-10 rounded-xl bg-navy-700 flex items-center justify-center text-gray-400 hover:text-white hover:bg-navy-600 transition-colors"><FiX size={20} /></button>
               </div>
               <div className="prose prose-invert prose-sm max-w-none text-gray-300 leading-relaxed whitespace-pre-line">
                 {selectedArticle.content.split('\n').map((line, i) => {
-                  if (line.startsWith('### ')) return <h3 key={i} className="text-xl font-bold text-white mt-4 mb-2">{line.replace('### ', '')}</h3>;
-                  if (line.startsWith('#### ')) return <h4 key={i} className="text-lg font-semibold text-gold mt-3 mb-1">{line.replace('#### ', '')}</h4>;
+                  if (line.startsWith('### ')) return <h3 key={i} className="text-xl font-bold text-white mt-6 mb-3">{line.replace('### ', '')}</h3>;
+                  if (line.startsWith('#### ')) return <h4 key={i} className="text-lg font-semibold text-gold mt-5 mb-2">{line.replace('#### ', '')}</h4>;
                   if (line.startsWith('- **')) {
                     const parts = line.replace('- **', '').split('**');
-                    return <p key={i} className="ml-4 mb-1"><strong className="text-white">{parts[0]}</strong>{parts[1]}</p>;
+                    return <p key={i} className="ml-4 mb-2 flex gap-2"><span className="text-gold shrink-0">&bull;</span><span><strong className="text-white">{parts[0]}</strong>{parts[1]}</span></p>;
                   }
-                  if (line.match(/^\d+\./)) return <p key={i} className="ml-4 mb-1">{line}</p>;
+                  if (line.match(/^\d+\./)) return <p key={i} className="ml-4 mb-2">{line}</p>;
                   return <p key={i} className="mb-2">{line}</p>;
                 })}
               </div>

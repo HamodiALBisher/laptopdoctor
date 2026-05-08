@@ -30,6 +30,8 @@ body {
   background-color: #0a0e1a;
   color: #ffffff;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* High contrast mode */
@@ -109,7 +111,7 @@ body.reduce-motion * {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #243044;
+  background: #1a2332;
   border-radius: 4px;
 }
 
@@ -124,4 +126,10 @@ body.font-size-large {
 
 body.font-size-xlarge {
   --font-size-base: 24px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(212, 168, 67, 0.3);
+  color: #ffffff;
 }
