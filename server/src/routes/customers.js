@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const Customer = require('../models/Customer');
 const Booking = require('../models/Booking');
+const { welcomeEmail } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -48,6 +49,8 @@ router.post('/register', [
     const passwordHash = await Customer.hashPassword(password);
     const customer = new Customer({ fullName, email, phone, passwordHash });
     await customer.save();
+
+    welcomeEmail(customer);
 
     const token = jwt.sign(
       { id: customer._id, email: customer.email, role: 'customer' },

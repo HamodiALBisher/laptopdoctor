@@ -5,6 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const Booking = require('../models/Booking');
 const authMiddleware = require('../middleware/auth');
+const { bookingConfirmationEmail, statusUpdateEmail } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -71,6 +72,8 @@ router.post('/', upload.single('image'), [
 
     const booking = new Booking(bookingData);
     await booking.save();
+
+    bookingConfirmationEmail(booking);
 
     res.status(201).json({
       message: 'Booking created successfully',
@@ -230,6 +233,8 @@ router.patch('/:id/status', authMiddleware, [
       return res.status(404).json({ error: 'Booking not found' });
     }
 
+    statusUpdateEmail(booking);
+
     res.json({ message: 'Status updated', booking });
   } catch (err) {
     console.error('Update status error:', err.message);
@@ -248,6 +253,7 @@ router.patch('/:id', authMiddleware, async (req, res) => {
       }
     }
 
+    const oldBooking = await Booking.findById(req.params.id);
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       updates,
@@ -256,6 +262,10 @@ router.patch('/:id', authMiddleware, async (req, res) => {
 
     if (!booking) {
       return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    if (updates.status && oldBooking && oldBooking.status !== updates.status) {
+      statusUpdateEmail(booking);
     }
 
     res.json({ message: 'Booking updated', booking });
