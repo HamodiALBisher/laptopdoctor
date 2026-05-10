@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { FiCheckCircle, FiUpload } from 'react-icons/fi';
+import { FiCheckCircle, FiUpload, FiSend } from 'react-icons/fi';
 import axios from 'axios';
 
 const deviceTypes = ['Laptop', 'Desktop', 'Gaming PC', 'External HDD', 'SSD', 'Other'];
@@ -58,24 +58,26 @@ export default function Booking() {
 
   if (success) {
     return (
-      <div className="pt-24 pb-20 bg-navy-900 min-h-screen">
-        <div className="max-w-lg mx-auto px-4">
+      <div className="pt-28 pb-24 bg-navy-900 min-h-screen flex items-center">
+        <div className="max-w-lg mx-auto px-4 sm:px-6 w-full">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center p-8 rounded-2xl bg-navy-800 border border-green-500/30"
+            className="text-center p-10 rounded-2xl bg-navy-800 border border-green-500/30 shadow-lg shadow-green-500/5"
           >
-            <FiCheckCircle className="text-green-400 text-6xl mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">{t('booking.successTitle')}</h2>
-            <p className="text-gray-400 mb-6">{t('booking.successMessage')}</p>
-            <div className="bg-navy-700 rounded-xl p-4 mb-6">
-              <p className="text-sm text-gray-400">{t('booking.requestId')}</p>
-              <p className="text-2xl font-bold text-gold mt-1">{success.requestId}</p>
-              <p className="text-xs text-gray-500 mt-2">{t('booking.saveId')}</p>
+            <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
+              <FiCheckCircle className="text-green-400 text-4xl" />
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-3">{t('booking.successTitle')}</h2>
+            <p className="text-gray-400 mb-8">{t('booking.successMessage')}</p>
+            <div className="bg-navy-700 rounded-xl p-6 mb-8">
+              <p className="text-sm text-gray-400 mb-2">{t('booking.requestId')}</p>
+              <p className="text-3xl font-bold text-gold">{success.requestId}</p>
+              <p className="text-xs text-gray-500 mt-3">{t('booking.saveId')}</p>
             </div>
             <button
               onClick={() => { setSuccess(null); setForm({ fullName: '', phone: '', email: '', city: '', deviceType: '', brandModel: '', problemCategory: '', problemDescription: '', urgency: 'Normal', preferredContact: 'Phone', privacyAgreed: false }); setImage(null); }}
-              className="px-6 py-3 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all"
+              className="px-8 py-3 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all"
             >
               {t('booking.newBooking')}
             </button>
@@ -92,15 +94,16 @@ export default function Booking() {
         <meta name="description" content="Book a professional PC or laptop repair. Fast diagnostics and reliable service." />
       </Helmet>
 
-      <section className="pt-24 pb-20 bg-navy-900 min-h-screen">
-        <div className="max-w-2xl mx-auto px-4">
+      <section className="pt-28 pb-24 bg-navy-900 min-h-screen">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-10"
+            className="text-center mb-12"
           >
-            <h1 className="text-4xl font-bold text-white mb-3">{t('booking.title')}</h1>
-            <p className="text-gray-400">{t('booking.subtitle')}</p>
+            <span className="text-gold text-sm font-semibold tracking-wider uppercase">Get Started</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">{t('booking.title')}</h1>
+            <p className="text-gray-400 text-lg">{t('booking.subtitle')}</p>
           </motion.div>
 
           <motion.form
@@ -108,41 +111,41 @@ export default function Booking() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             onSubmit={handleSubmit}
-            className="space-y-5 bg-navy-800 p-6 md:p-8 rounded-2xl border border-navy-700"
+            className="space-y-6 bg-navy-800 p-8 md:p-10 rounded-2xl border border-navy-700 shadow-xl"
           >
             {error && (
-              <div className="p-3 rounded-lg bg-red-900/30 border border-red-500/30 text-red-400 text-sm">{error}</div>
+              <div className="p-4 rounded-xl bg-red-900/30 border border-red-500/30 text-red-400 text-sm">{error}</div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="fullName" className="block text-sm text-gray-300 mb-1">{t('booking.fullName')} *</label>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.fullName')} *</label>
                 <input id="fullName" name="fullName" required value={form.fullName} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors" />
+                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors placeholder-gray-500" placeholder="John Doe" />
               </div>
               <div>
-                <label htmlFor="phone" className="block text-sm text-gray-300 mb-1">{t('booking.phone')} *</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.phone')} *</label>
                 <input id="phone" name="phone" type="tel" required value={form.phone} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors" />
+                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors placeholder-gray-500" placeholder="+972-50-000-0000" />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="email" className="block text-sm text-gray-300 mb-1">{t('booking.email')} *</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.email')} *</label>
                 <input id="email" name="email" type="email" required value={form.email} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors" />
+                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors placeholder-gray-500" placeholder="john@example.com" />
               </div>
               <div>
-                <label htmlFor="city" className="block text-sm text-gray-300 mb-1">{t('booking.city')} *</label>
+                <label htmlFor="city" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.city')} *</label>
                 <input id="city" name="city" required value={form.city} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors" />
+                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none transition-colors placeholder-gray-500" placeholder="Tel Aviv" />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="deviceType" className="block text-sm text-gray-300 mb-1">{t('booking.deviceType')} *</label>
+                <label htmlFor="deviceType" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.deviceType')} *</label>
                 <select id="deviceType" name="deviceType" required value={form.deviceType} onChange={handleChange}
                   className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors">
                   <option value="">{t('booking.selectDevice')}</option>
@@ -150,15 +153,15 @@ export default function Booking() {
                 </select>
               </div>
               <div>
-                <label htmlFor="brandModel" className="block text-sm text-gray-300 mb-1">{t('booking.brandModel')}</label>
+                <label htmlFor="brandModel" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.brandModel')}</label>
                 <input id="brandModel" name="brandModel" value={form.brandModel} onChange={handleChange}
-                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors"
+                  className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors placeholder-gray-500"
                   placeholder="e.g. Dell Inspiron 15" />
               </div>
             </div>
 
             <div>
-              <label htmlFor="problemCategory" className="block text-sm text-gray-300 mb-1">{t('booking.problemCategory')} *</label>
+              <label htmlFor="problemCategory" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.problemCategory')} *</label>
               <select id="problemCategory" name="problemCategory" required value={form.problemCategory} onChange={handleChange}
                 className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors">
                 <option value="">{t('booking.selectCategory')}</option>
@@ -167,21 +170,21 @@ export default function Booking() {
             </div>
 
             <div>
-              <label htmlFor="problemDescription" className="block text-sm text-gray-300 mb-1">{t('booking.problemDescription')} *</label>
+              <label htmlFor="problemDescription" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.problemDescription')} *</label>
               <textarea id="problemDescription" name="problemDescription" required rows={4} value={form.problemDescription} onChange={handleChange}
-                className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors resize-none" />
+                className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors resize-none placeholder-gray-500" placeholder="Describe the issue in detail..." />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="urgency" className="block text-sm text-gray-300 mb-1">{t('booking.urgency')} *</label>
+                <label htmlFor="urgency" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.urgency')} *</label>
                 <select id="urgency" name="urgency" value={form.urgency} onChange={handleChange}
                   className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors">
                   {urgencyLevels.map(u => <option key={u} value={u}>{t(`booking.${u.toLowerCase()}`)}</option>)}
                 </select>
               </div>
               <div>
-                <label htmlFor="preferredContact" className="block text-sm text-gray-300 mb-1">{t('booking.preferredContact')} *</label>
+                <label htmlFor="preferredContact" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.preferredContact')} *</label>
                 <select id="preferredContact" name="preferredContact" value={form.preferredContact} onChange={handleChange}
                   className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors">
                   {contactMethods.map(c => <option key={c} value={c}>{c}</option>)}
@@ -190,15 +193,15 @@ export default function Booking() {
             </div>
 
             <div>
-              <label className="block text-sm text-gray-300 mb-1">{t('booking.uploadImage')}</label>
-              <label className="flex items-center gap-2 px-4 py-3 bg-navy-700 border border-navy-600 border-dashed rounded-xl cursor-pointer hover:border-gold transition-colors">
-                <FiUpload className="text-gray-400" />
-                <span className="text-gray-400 text-sm">{image ? image.name : 'Choose file...'}</span>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t('booking.uploadImage')}</label>
+              <label className="flex items-center justify-center gap-3 px-4 py-5 bg-navy-700 border-2 border-dashed border-navy-500 rounded-xl cursor-pointer hover:border-gold/50 transition-colors group">
+                <FiUpload className="text-gray-400 text-xl group-hover:text-gold transition-colors" />
+                <span className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">{image ? image.name : 'Click to upload an image'}</span>
                 <input type="file" accept="image/*" className="hidden" onChange={(e) => setImage(e.target.files[0])} />
               </label>
             </div>
 
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-navy-700/50 border border-navy-600">
               <input
                 id="privacyAgreed"
                 name="privacyAgreed"
@@ -206,17 +209,17 @@ export default function Booking() {
                 checked={form.privacyAgreed}
                 onChange={handleChange}
                 required
-                className="mt-1 w-4 h-4 rounded border-navy-600 bg-navy-700 text-gold focus:ring-gold"
+                className="mt-0.5 w-5 h-5 rounded border-navy-600 bg-navy-700 text-gold focus:ring-gold"
               />
-              <label htmlFor="privacyAgreed" className="text-sm text-gray-400">{t('booking.privacyAgree')}</label>
+              <label htmlFor="privacyAgreed" className="text-sm text-gray-400 leading-relaxed">{t('booking.privacyAgree')}</label>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+              className="w-full py-4 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all disabled:opacity-50 disabled:cursor-not-allowed text-lg flex items-center justify-center gap-2 shadow-lg shadow-gold/20 hover:shadow-gold/40"
             >
-              {loading ? t('booking.submitting') : t('booking.submit')}
+              {loading ? t('booking.submitting') : <>{t('booking.submit')} <FiSend /></>}
             </button>
           </motion.form>
         </div>

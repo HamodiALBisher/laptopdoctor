@@ -118,6 +118,9 @@
     "requestId": "Request ID",
     "search": "Track Status",
     "searching": "Searching...",
+    "placeholder": "Enter phone number or request ID",
+    "notFound": "No repair found. Please check your information and try again.",
+    "techNotes": "Technician Notes",
     "noResults": "No bookings found. Please check your information and try again.",
     "status": {
       "Pending": "Pending",

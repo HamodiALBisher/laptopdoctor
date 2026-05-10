@@ -1,43 +1,23 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiCheck, FiClock, FiTool, FiPackage, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import axios from 'axios';
 
-const statusSteps = ['Pending', 'Diagnosing', 'Waiting for Approval', 'In Repair', 'Ready for Pickup', 'Completed'];
-
-function StatusTracker({ currentStatus }) {
-  const { t } = useTranslation();
-  const currentIndex = statusSteps.indexOf(currentStatus);
-
-  return (
-    <div className="flex flex-col gap-3 mt-4">
-      {statusSteps.map((step, i) => {
-        const isDone = i <= currentIndex;
-        const isCurrent = i === currentIndex;
-        return (
-          <div key={step} className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${
-              isCurrent ? 'bg-gold text-navy-900' : isDone ? 'bg-green-500 text-white' : 'bg-navy-600 text-gray-400'
-            }`}>
-              {isDone && !isCurrent ? '✓' : i + 1}
-            </div>
-            <div className={`text-sm font-medium ${isCurrent ? 'text-gold' : isDone ? 'text-green-400' : 'text-gray-500'}`}>
-              {t(`tracking.status.${step}`)}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+const statusSteps = [
+  { key: 'Pending', icon: FiClock, color: 'yellow' },
+  { key: 'Diagnosing', icon: FiSearch, color: 'blue' },
+  { key: 'Waiting for Approval', icon: FiAlertCircle, color: 'purple' },
+  { key: 'In Repair', icon: FiTool, color: 'orange' },
+  { key: 'Ready for Pickup', icon: FiPackage, color: 'cyan' },
+  { key: 'Completed', icon: FiCheckCircle, color: 'green' }
+];
 
 export default function TrackRepair() {
   const { t } = useTranslation();
-  const [searchType, setSearchType] = useState('requestId');
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState(null);
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,107 +26,154 @@ export default function TrackRepair() {
     if (!query.trim()) return;
     setLoading(true);
     setError('');
-    setResults(null);
+    setResult(null);
 
     try {
-      const params = searchType === 'requestId' ? { requestId: query } : { phone: query };
-      const res = await axios.get('/api/bookings/track', { params });
-      setResults(res.data.bookings);
+      const res = await axios.get(`/api/bookings/${query.trim()}`);
+      setResult(res.data);
     } catch (err) {
-      setError(err.response?.data?.error || t('common.error'));
+      setError(err.response?.data?.error || t('tracking.notFound'));
     } finally {
       setLoading(false);
     }
   };
 
+  const currentStepIndex = result ? statusSteps.findIndex(s => s.key === result.status) : -1;
+
   return (
     <>
       <Helmet>
         <title>Track Repair - LaptopDoctor</title>
-        <meta name="description" content="Track your repair status with your phone number or request ID." />
+        <meta name="description" content="Track the status of your PC or laptop repair." />
       </Helmet>
 
-      <section className="pt-24 pb-20 bg-navy-900 min-h-screen">
-        <div className="max-w-2xl mx-auto px-4">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-white mb-3">{t('tracking.title')}</h1>
-            <p className="text-gray-400">{t('tracking.subtitle')}</p>
+      <section className="pt-28 pb-24 bg-navy-900 min-h-screen">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
+            <span className="text-gold text-sm font-semibold tracking-wider uppercase">Real-Time Updates</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mt-3 mb-4">{t('tracking.title')}</h1>
+            <p className="text-gray-400 text-lg">{t('tracking.subtitle')}</p>
           </motion.div>
 
-          <motion.div
+          <motion.form
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-navy-800 p-6 md:p-8 rounded-2xl border border-navy-700"
+            transition={{ delay: 0.1 }}
+            onSubmit={handleSearch}
+            className="mb-8"
           >
-            <div className="flex gap-2 mb-6">
-              <button
-                onClick={() => setSearchType('requestId')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  searchType === 'requestId' ? 'bg-gold text-navy-900' : 'bg-navy-700 text-gray-300 hover:bg-navy-600'
-                }`}
-              >
-                {t('tracking.requestId')}
-              </button>
-              <button
-                onClick={() => setSearchType('phone')}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  searchType === 'phone' ? 'bg-gold text-navy-900' : 'bg-navy-700 text-gray-300 hover:bg-navy-600'
-                }`}
-              >
-                {t('tracking.phone')}
-              </button>
-            </div>
-
-            <form onSubmit={handleSearch} className="flex gap-3">
+            <div className="relative">
+              <FiSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-xl" />
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={searchType === 'requestId' ? 'LD-XXXXXXX-XXXX' : '+972...'}
-                className="flex-1 px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors"
-                aria-label={searchType === 'requestId' ? t('tracking.requestId') : t('tracking.phone')}
+                placeholder={t('tracking.placeholder')}
+                className="w-full pl-14 pr-36 py-4 bg-navy-800 border border-navy-700 rounded-2xl text-white focus:border-gold focus:ring-1 focus:ring-gold outline-none text-lg placeholder-gray-500"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all disabled:opacity-50"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-6 py-2.5 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all disabled:opacity-50 text-sm"
               >
-                {loading ? '...' : <FiSearch size={20} />}
+                {loading ? t('tracking.searching') : t('tracking.search')}
               </button>
-            </form>
+            </div>
+          </motion.form>
 
+          <AnimatePresence>
             {error && (
-              <div className="mt-4 p-3 rounded-lg bg-red-900/30 border border-red-500/30 text-red-400 text-sm">{error}</div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="text-center py-12 text-gray-400"
+              >
+                <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                  <FiAlertCircle className="text-red-400 text-2xl" />
+                </div>
+                <p className="text-red-400 font-medium">{error}</p>
+              </motion.div>
             )}
 
-            {results && results.length === 0 && (
-              <div className="mt-6 text-center text-gray-400 py-8">{t('tracking.noResults')}</div>
-            )}
-
-            {results && results.length > 0 && (
-              <div className="mt-6 space-y-6">
-                {results.map((booking) => (
-                  <div key={booking.requestId} className="p-5 rounded-xl bg-navy-700/50 border border-navy-600">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <p className="text-xs text-gray-400">{t('booking.requestId')}</p>
-                        <p className="text-lg font-bold text-gold">{booking.requestId}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-gray-400">{booking.deviceType}</p>
-                        <p className="text-sm text-gray-300">{booking.brandModel}</p>
-                      </div>
+            {result && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                {/* Request info card */}
+                <div className="p-7 rounded-2xl bg-navy-800 border border-navy-700">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Request ID</p>
+                      <p className="text-gold font-bold text-lg">{result.requestId}</p>
                     </div>
-                    <StatusTracker currentStatus={booking.status} />
-                    <p className="text-xs text-gray-500 mt-4">
-                      Submitted: {new Date(booking.createdAt).toLocaleDateString()}
-                    </p>
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                      result.status === 'Completed' ? 'bg-green-400/10 text-green-400 border border-green-400/20' :
+                      result.status === 'Pending' ? 'bg-yellow-400/10 text-yellow-400 border border-yellow-400/20' :
+                      'bg-blue-400/10 text-blue-400 border border-blue-400/20'
+                    }`}>{result.status}</span>
                   </div>
-                ))}
-              </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div><span className="text-gray-500">Device:</span> <span className="text-white font-medium ml-1">{result.deviceType}</span></div>
+                    <div><span className="text-gray-500">Brand:</span> <span className="text-white font-medium ml-1">{result.brandModel || 'N/A'}</span></div>
+                    {result.estimatedPrice && (
+                      <div className="col-span-2"><span className="text-gray-500">Estimated Price:</span> <span className="text-gold font-semibold ml-1">{result.estimatedPrice}</span></div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status timeline */}
+                <div className="p-7 rounded-2xl bg-navy-800 border border-navy-700">
+                  <h3 className="text-lg font-bold text-white mb-6">Repair Progress</h3>
+                  <div className="space-y-0">
+                    {statusSteps.map((step, i) => {
+                      const isCompleted = i <= currentStepIndex;
+                      const isCurrent = i === currentStepIndex;
+                      const isLast = i === statusSteps.length - 1;
+
+                      return (
+                        <div key={step.key} className="flex gap-4">
+                          <div className="flex flex-col items-center">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                              isCurrent ? `bg-${step.color}-400/20 border-2 border-${step.color}-400 ring-4 ring-${step.color}-400/10` :
+                              isCompleted ? 'bg-green-400/20 border-2 border-green-400' :
+                              'bg-navy-700 border-2 border-navy-600'
+                            }`}>
+                              {isCompleted && !isCurrent ? (
+                                <FiCheck className="text-green-400" />
+                              ) : (
+                                <step.icon className={isCurrent ? `text-${step.color}-400` : 'text-gray-500'} />
+                              )}
+                            </div>
+                            {!isLast && (
+                              <div className={`w-0.5 h-8 ${isCompleted && i < currentStepIndex ? 'bg-green-400/40' : 'bg-navy-600'}`} />
+                            )}
+                          </div>
+                          <div className={`pb-8 ${isCurrent ? '' : ''}`}>
+                            <p className={`font-medium ${isCurrent ? 'text-white' : isCompleted ? 'text-green-400' : 'text-gray-500'}`}>
+                              {step.key}
+                            </p>
+                            {isCurrent && (
+                              <p className="text-xs text-gray-500 mt-1">Current status</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {result.technicianNotes && (
+                  <div className="p-7 rounded-2xl bg-navy-800 border border-navy-700">
+                    <h3 className="text-lg font-bold text-white mb-3">{t('tracking.techNotes')}</h3>
+                    <p className="text-gray-300 leading-relaxed">{result.technicianNotes}</p>
+                  </div>
+                )}
+              </motion.div>
             )}
-          </motion.div>
+          </AnimatePresence>
         </div>
       </section>
     </>

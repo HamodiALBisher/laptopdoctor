@@ -51,29 +51,34 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-900 via-navy-800 to-navy-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900" />
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 25% 50%, #d4a843 0%, transparent 50%), radial-gradient(circle at 75% 50%, #22d3ee 0%, transparent 50%)' }} />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(212,168,67,0.08)_0%,_transparent_70%)]" />
         
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 text-gold text-sm font-medium mb-8">
+              <FiShield className="text-base" />
+              Trusted by 2,000+ customers
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               {t('hero.title').split(' ').map((word, i) => (
                 <span key={i} className={i >= 1 && i <= 2 ? 'text-gold' : 'text-white'}>
                   {word}{' '}
                 </span>
               ))}
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
               {t('hero.subtitle')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 to="/booking"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all shadow-lg shadow-gold/20 text-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all shadow-lg shadow-gold/20 text-lg hover:shadow-gold/40 hover:scale-[1.02]"
               >
                 {t('hero.bookRepair')} <FiArrowRight />
               </Link>
@@ -81,29 +86,33 @@ export default function Home() {
                 href="https://wa.me/972500000000?text=Hello%20LaptopDoctor%2C%20I%20need%20help%20with%20my%20device"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-bold rounded-xl hover:bg-green-500 transition-all shadow-lg text-lg"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-green-600 text-white font-bold rounded-xl hover:bg-green-500 transition-all shadow-lg text-lg hover:scale-[1.02]"
               >
                 <FaWhatsapp size={20} /> {t('hero.whatsapp')}
               </a>
             </div>
           </motion.div>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-navy-800 to-transparent" />
       </section>
 
       {/* Trust Badges */}
-      <section className="py-16 bg-navy-800">
-        <div className="max-w-7xl mx-auto px-4">
+      <section className="py-20 bg-navy-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {trustBadges.map((badge, i) => (
               <motion.div
                 key={i}
                 {...fadeInUp}
                 transition={{ ...fadeInUp.transition, delay: i * 0.1 }}
-                className="text-center p-6 rounded-2xl bg-navy-700/50 border border-navy-600 hover:border-gold/30 transition-colors"
+                className="text-center p-8 rounded-2xl bg-navy-700/50 border border-navy-600 hover:border-gold/30 transition-all hover:bg-navy-700/80 hover:shadow-lg hover:shadow-gold/5"
               >
-                <badge.icon className="text-gold text-3xl mx-auto mb-3" />
-                <h3 className="text-white font-semibold mb-1">{badge.title}</h3>
-                <p className="text-gray-400 text-sm">{badge.desc}</p>
+                <div className="w-14 h-14 rounded-xl bg-gold/10 flex items-center justify-center mx-auto mb-4">
+                  <badge.icon className="text-gold text-2xl" />
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-2">{badge.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{badge.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -111,11 +120,12 @@ export default function Home() {
       </section>
 
       {/* Service Preview */}
-      <section className="py-20 bg-navy-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <motion.div {...fadeInUp} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('services.title')}</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">{t('services.subtitle')}</p>
+      <section className="py-24 bg-navy-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <motion.div {...fadeInUp} className="text-center mb-14">
+            <span className="text-gold text-sm font-semibold tracking-wider uppercase">What We Do</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mt-3 mb-4">{t('services.title')}</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">{t('services.subtitle')}</p>
           </motion.div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {servicePreview.map((svc, i) => (
@@ -123,19 +133,21 @@ export default function Home() {
                 key={i}
                 {...fadeInUp}
                 transition={{ ...fadeInUp.transition, delay: i * 0.1 }}
-                className="p-6 rounded-2xl bg-navy-800 border border-navy-700 hover:border-gold/30 transition-all group"
+                className="text-center p-8 rounded-2xl bg-navy-800 border border-navy-700 hover:border-gold/30 transition-all group hover:shadow-lg hover:shadow-gold/5"
               >
-                <svc.icon className="text-cyan-accent text-3xl mb-4 group-hover:text-gold transition-colors" />
-                <h3 className="text-white font-semibold mb-2">{svc.name}</h3>
-                <p className="text-gray-400 text-sm mb-4">{svc.desc}</p>
+                <div className="w-16 h-16 rounded-2xl bg-cyan-accent/10 flex items-center justify-center mx-auto mb-5 group-hover:bg-gold/10 transition-colors">
+                  <svc.icon className="text-cyan-accent text-3xl group-hover:text-gold transition-colors" />
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-3">{svc.name}</h3>
+                <p className="text-gray-400 text-sm mb-5 leading-relaxed">{svc.desc}</p>
                 <Link to="/services" className="text-gold text-sm font-medium hover:text-gold-light transition-colors inline-flex items-center gap-1">
                   Learn more <FiArrowRight />
                 </Link>
               </motion.div>
             ))}
           </div>
-          <div className="text-center mt-10">
-            <Link to="/services" className="inline-flex items-center gap-2 px-6 py-3 border border-gold text-gold rounded-xl hover:bg-gold hover:text-navy-900 transition-all font-medium">
+          <div className="text-center mt-12">
+            <Link to="/services" className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-gold text-gold rounded-xl hover:bg-gold hover:text-navy-900 transition-all font-semibold">
               View All Services <FiArrowRight />
             </Link>
           </div>
@@ -143,11 +155,12 @@ export default function Home() {
       </section>
 
       {/* Before/After */}
-      <section className="py-20 bg-navy-800">
-        <div className="max-w-7xl mx-auto px-4">
-          <motion.div {...fadeInUp} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Before & After</h2>
-            <p className="text-gray-400">See the difference our expert repairs make</p>
+      <section className="py-24 bg-navy-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <motion.div {...fadeInUp} className="text-center mb-14">
+            <span className="text-cyan-accent text-sm font-semibold tracking-wider uppercase">Results</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mt-3 mb-4">Before & After</h2>
+            <p className="text-gray-400 text-lg">See the difference our expert repairs make</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -159,23 +172,24 @@ export default function Home() {
                 key={i}
                 {...fadeInUp}
                 transition={{ ...fadeInUp.transition, delay: i * 0.15 }}
-                className="rounded-2xl bg-navy-700/50 border border-navy-600 overflow-hidden"
+                className="rounded-2xl bg-navy-700/50 border border-navy-600 overflow-hidden hover:border-navy-500 transition-all hover:shadow-lg"
               >
-                <div className="p-6">
-                  <span className="text-xs font-semibold text-gold bg-gold/10 px-2 py-1 rounded">{item.service}</span>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-start gap-3">
-                      <span className="w-2 h-2 mt-2 rounded-full bg-red-500 shrink-0" />
+                <div className="p-8">
+                  <span className="inline-block text-xs font-semibold text-gold bg-gold/10 px-3 py-1.5 rounded-full mb-5">{item.service}</span>
+                  <div className="space-y-5">
+                    <div className="flex items-start gap-4">
+                      <div className="w-3 h-3 mt-1.5 rounded-full bg-red-500 shrink-0 ring-4 ring-red-500/20" />
                       <div>
-                        <p className="text-xs text-red-400 font-medium">BEFORE</p>
-                        <p className="text-gray-300 text-sm">{item.before}</p>
+                        <p className="text-xs text-red-400 font-semibold uppercase tracking-wide mb-1">BEFORE</p>
+                        <p className="text-gray-300">{item.before}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <span className="w-2 h-2 mt-2 rounded-full bg-green-500 shrink-0" />
+                    <div className="border-l-2 border-dashed border-navy-500 ml-1.5 h-4" />
+                    <div className="flex items-start gap-4">
+                      <div className="w-3 h-3 mt-1.5 rounded-full bg-green-500 shrink-0 ring-4 ring-green-500/20" />
                       <div>
-                        <p className="text-xs text-green-400 font-medium">AFTER</p>
-                        <p className="text-gray-300 text-sm">{item.after}</p>
+                        <p className="text-xs text-green-400 font-semibold uppercase tracking-wide mb-1">AFTER</p>
+                        <p className="text-gray-300">{item.after}</p>
                       </div>
                     </div>
                   </div>
@@ -187,11 +201,12 @@ export default function Home() {
       </section>
 
       {/* Reviews */}
-      <section className="py-20 bg-navy-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <motion.div {...fadeInUp} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Customer Reviews</h2>
-            <p className="text-gray-400">What our customers say about us</p>
+      <section className="py-24 bg-navy-900">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <motion.div {...fadeInUp} className="text-center mb-14">
+            <span className="text-gold text-sm font-semibold tracking-wider uppercase">Testimonials</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mt-3 mb-4">Customer Reviews</h2>
+            <p className="text-gray-400 text-lg">What our customers say about us</p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {reviews.map((review, i) => (
@@ -199,15 +214,20 @@ export default function Home() {
                 key={i}
                 {...fadeInUp}
                 transition={{ ...fadeInUp.transition, delay: i * 0.1 }}
-                className="p-6 rounded-2xl bg-navy-800 border border-navy-700"
+                className="p-7 rounded-2xl bg-navy-800 border border-navy-700 hover:border-gold/20 transition-all hover:shadow-lg"
               >
-                <div className="flex gap-1 mb-3">
+                <div className="flex gap-1 mb-4">
                   {[...Array(review.rating)].map((_, j) => (
-                    <span key={j} className="text-gold">&#9733;</span>
+                    <span key={j} className="text-gold text-lg">&#9733;</span>
                   ))}
                 </div>
-                <p className="text-gray-300 text-sm mb-4 italic">"{review.text}"</p>
-                <p className="text-white font-semibold text-sm">— {review.name}</p>
+                <p className="text-gray-300 text-sm mb-5 italic leading-relaxed">&ldquo;{review.text}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold text-sm">
+                    {review.name.charAt(0)}
+                  </div>
+                  <p className="text-white font-semibold text-sm">{review.name}</p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -215,10 +235,11 @@ export default function Home() {
       </section>
 
       {/* FAQ Preview */}
-      <section className="py-20 bg-navy-800">
-        <div className="max-w-3xl mx-auto px-4">
-          <motion.div {...fadeInUp} className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('faq.title')}</h2>
+      <section className="py-24 bg-navy-800">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <motion.div {...fadeInUp} className="text-center mb-14">
+            <span className="text-cyan-accent text-sm font-semibold tracking-wider uppercase">Got Questions?</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mt-3 mb-4">{t('faq.title')}</h2>
           </motion.div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
@@ -226,15 +247,15 @@ export default function Home() {
                 key={i}
                 {...fadeInUp}
                 transition={{ ...fadeInUp.transition, delay: i * 0.1 }}
-                className="p-6 rounded-xl bg-navy-700/50 border border-navy-600"
+                className="p-6 rounded-2xl bg-navy-700/50 border border-navy-600 hover:border-navy-500 transition-all"
               >
-                <h3 className="text-white font-semibold mb-2">{faq.q}</h3>
-                <p className="text-gray-400 text-sm">{faq.a}</p>
+                <h3 className="text-white font-semibold mb-3 text-lg">{faq.q}</h3>
+                <p className="text-gray-400 leading-relaxed">{faq.a}</p>
               </motion.div>
             ))}
           </div>
-          <div className="text-center mt-8">
-            <Link to="/faq" className="text-gold hover:text-gold-light transition-colors font-medium inline-flex items-center gap-1">
+          <div className="text-center mt-10">
+            <Link to="/faq" className="text-gold hover:text-gold-light transition-colors font-semibold inline-flex items-center gap-2 text-lg">
               View all FAQs <FiArrowRight />
             </Link>
           </div>
@@ -242,20 +263,21 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-gold/10 to-cyan-accent/10">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <section className="py-24 bg-gradient-to-br from-gold/10 via-navy-900 to-cyan-accent/10 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(212,168,67,0.1)_0%,_transparent_50%)]" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div {...fadeInUp}>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Fix Your Device?</h2>
-            <p className="text-gray-300 mb-8 text-lg">Book your repair now and get same-day diagnostics</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/booking" className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all text-lg">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-5">Ready to Fix Your Device?</h2>
+            <p className="text-gray-300 mb-10 text-lg max-w-xl mx-auto">Book your repair now and get same-day diagnostics</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link to="/booking" className="inline-flex items-center gap-2 px-10 py-4 bg-gold text-navy-900 font-bold rounded-xl hover:bg-gold-light transition-all text-lg shadow-lg shadow-gold/20 hover:shadow-gold/40 hover:scale-[1.02]">
                 {t('hero.bookRepair')} <FiArrowRight />
               </Link>
               <a
                 href="https://wa.me/972500000000?text=Hello%20LaptopDoctor%2C%20I%20need%20emergency%20repair"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 border-2 border-red-500 text-red-400 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all text-lg"
+                className="inline-flex items-center gap-2 px-10 py-4 border-2 border-red-500 text-red-400 font-bold rounded-xl hover:bg-red-500 hover:text-white transition-all text-lg hover:scale-[1.02]"
               >
                 Emergency Repair
               </a>
