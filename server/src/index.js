@@ -9,6 +9,7 @@ const path = require('path');
 
 const bookingRoutes = require('./routes/bookings');
 const authRoutes = require('./routes/auth');
+const customerRoutes = require('./routes/customers');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -41,6 +42,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/customers', customerRoutes);
 
 // Health check
 app.get('/api/health', async (req, res) => {

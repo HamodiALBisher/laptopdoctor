@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -6,6 +6,7 @@ import { FiCheckCircle, FiUpload, FiSend, FiSearch, FiX,
   FiCpu, FiMonitor, FiShield, FiDatabase, FiZap,
   FiSave, FiSmartphone, FiTool, FiBattery, FiWind, FiHelpCircle
 } from 'react-icons/fi';
+import { useCustomerAuth } from '../contexts/CustomerAuthContext';
 import axios from 'axios';
 
 const deviceTypes = ['Laptop', 'Desktop', 'Gaming PC', 'External HDD', 'SSD', 'Other'];
@@ -14,12 +15,24 @@ const contactMethods = ['Phone', 'WhatsApp', 'Email'];
 
 export default function Booking() {
   const { t } = useTranslation();
+  const { customer, isLoggedIn } = useCustomerAuth();
   const [form, setForm] = useState({
     fullName: '', phone: '', email: '', city: '',
     deviceType: '', brandModel: '', problemCategory: '',
     problemDescription: '', urgency: 'Normal',
     preferredContact: 'Phone', privacyAgreed: false
   });
+
+  useEffect(() => {
+    if (isLoggedIn && customer) {
+      setForm(prev => ({
+        ...prev,
+        fullName: customer.fullName || prev.fullName,
+        email: customer.email || prev.email,
+        phone: customer.phone || prev.phone
+      }));
+    }
+  }, [isLoggedIn, customer]);
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
