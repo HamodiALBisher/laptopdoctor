@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { FiCheckCircle, FiUpload, FiSend } from 'react-icons/fi';
+import { FiCheckCircle, FiUpload, FiSend, FiSearch, FiX,
+  FiCpu, FiMonitor, FiShield, FiDatabase, FiZap,
+  FiSave, FiSmartphone, FiTool, FiBattery, FiWind, FiHelpCircle
+} from 'react-icons/fi';
 import axios from 'axios';
 
 const deviceTypes = ['Laptop', 'Desktop', 'Gaming PC', 'External HDD', 'SSD', 'Other'];
@@ -23,9 +26,27 @@ export default function Booking() {
   const [error, setError] = useState('');
 
   const categories = [
-    'hardware', 'software', 'virus', 'data', 'upgrade',
-    'backup', 'screen', 'keyboard', 'battery', 'overheating', 'other'
+    { key: 'hardware', icon: FiCpu },
+    { key: 'software', icon: FiMonitor },
+    { key: 'virus', icon: FiShield },
+    { key: 'data', icon: FiDatabase },
+    { key: 'upgrade', icon: FiZap },
+    { key: 'backup', icon: FiSave },
+    { key: 'screen', icon: FiSmartphone },
+    { key: 'keyboard', icon: FiTool },
+    { key: 'battery', icon: FiBattery },
+    { key: 'overheating', icon: FiWind },
+    { key: 'other', icon: FiHelpCircle }
   ];
+  const [categorySearch, setCategorySearch] = useState('');
+
+  const filteredCategories = useMemo(() => {
+    if (!categorySearch) return categories;
+    const q = categorySearch.toLowerCase();
+    return categories.filter(c =>
+      t(`booking.categories.${c.key}`).toLowerCase().includes(q) || c.key.includes(q)
+    );
+  }, [categorySearch, t]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -161,12 +182,43 @@ export default function Booking() {
             </div>
 
             <div>
-              <label htmlFor="problemCategory" className="block text-sm font-medium text-gray-300 mb-2">{t('booking.problemCategory')} *</label>
-              <select id="problemCategory" name="problemCategory" required value={form.problemCategory} onChange={handleChange}
-                className="w-full px-4 py-3 bg-navy-700 border border-navy-600 rounded-xl text-white focus:border-gold outline-none transition-colors">
-                <option value="">{t('booking.selectCategory')}</option>
-                {categories.map(c => <option key={c} value={c}>{t(`booking.categories.${c}`)}</option>)}
-              </select>
+              <label className="block text-sm font-medium text-gray-300 mb-2">{t('booking.problemCategory')} *</label>
+              <div className="relative mb-3">
+                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
+                <input
+                  type="text"
+                  value={categorySearch}
+                  onChange={e => setCategorySearch(e.target.value)}
+                  placeholder="Search categories..."
+                  className="w-full pl-9 pr-8 py-2.5 bg-navy-700 border border-navy-600 rounded-lg text-white text-sm placeholder-gray-500 focus:border-gold outline-none transition-colors"
+                />
+                {categorySearch && (
+                  <button type="button" onClick={() => setCategorySearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                    <FiX className="text-sm" />
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {filteredCategories.map(c => (
+                  <button
+                    key={c.key}
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, problemCategory: c.key }))}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs font-medium transition-all ${
+                      form.problemCategory === c.key
+                        ? 'bg-gold/10 border-gold/40 text-gold'
+                        : 'bg-navy-700 border-navy-600 text-gray-400 hover:border-navy-500 hover:text-gray-300'
+                    }`}
+                  >
+                    <c.icon className={`text-lg ${form.problemCategory === c.key ? 'text-gold' : ''}`} />
+                    {t(`booking.categories.${c.key}`)}
+                  </button>
+                ))}
+              </div>
+              {filteredCategories.length === 0 && (
+                <p className="text-center text-gray-500 text-sm py-3">No categories found</p>
+              )}
+              <input type="hidden" name="problemCategory" value={form.problemCategory} required />
             </div>
 
             <div>
