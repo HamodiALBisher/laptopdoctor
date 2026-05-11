@@ -1,24 +1,28 @@
 const nodemailer = require('nodemailer');
-
 const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  },
-  tls: { rejectUnauthorized: false },
-  connectionTimeout: 15000,
-  greetingTimeout: 15000,
-  socketTimeout: 20000
-});
-
+let _transporter = null;
 const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER;
+
+async function getTransporter() {
+  if (_transporter) return _transporter;
+  const { address } = await dns.promises.lookup('smtp.gmail.com', { family: 4 });
+  console.log('SMTP resolved to IPv4:', address);
+  _transporter = nodemailer.createTransport({
+    host: address,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    },
+    tls: { servername: 'smtp.gmail.com', rejectUnauthorized: false },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 20000
+  });
+  return _transporter;
+}
 
 async function sendMail(to, subject, html) {
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
@@ -26,10 +30,12 @@ async function sendMail(to, subject, html) {
     return;
   }
   try {
+    const transporter = await getTransporter();
     await transporter.sendMail({ from: fromAddress, to, subject, html });
     console.log('Email sent:', subject, '->', to);
   } catch (err) {
     console.error('Email error:', err.message);
+    _transporter = null;
   }
 }
 
