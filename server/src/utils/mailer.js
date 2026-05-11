@@ -1,19 +1,32 @@
-const { Resend } = require('resend');
-
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const fromAddress = 'LaptopDoctor <onboarding@resend.dev>';
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const SENDER_EMAIL = process.env.SMTP_USER || 'mohamadbisher5@gmail.com';
+const SENDER_NAME = 'LaptopDoctor';
 
 async function sendMail(to, subject, html) {
-  if (!resend) {
-    console.log('Email skipped (RESEND_API_KEY not configured):', subject);
+  if (!BREVO_API_KEY) {
+    console.log('Email skipped (BREVO_API_KEY not configured):', subject);
     return;
   }
   try {
-    const { data, error } = await resend.emails.send({ from: fromAddress, to, subject, html });
-    if (error) {
-      console.error('Email error:', error.message);
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': BREVO_API_KEY,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+        to: [{ email: to }],
+        subject,
+        htmlContent: html
+      })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      console.log('Email sent:', subject, '->', to, '| id:', data.messageId);
     } else {
-      console.log('Email sent:', subject, '->', to, '| id:', data.id);
+      console.error('Email error:', data.message || JSON.stringify(data));
     }
   } catch (err) {
     console.error('Email error:', err.message);
