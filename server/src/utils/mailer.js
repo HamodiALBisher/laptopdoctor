@@ -1,41 +1,22 @@
-const nodemailer = require('nodemailer');
-const dns = require('dns');
+const { Resend } = require('resend');
 
-let _transporter = null;
-const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER;
-
-async function getTransporter() {
-  if (_transporter) return _transporter;
-  const { address } = await dns.promises.lookup('smtp.gmail.com', { family: 4 });
-  console.log('SMTP resolved to IPv4:', address);
-  _transporter = nodemailer.createTransport({
-    host: address,
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    },
-    tls: { servername: 'smtp.gmail.com', rejectUnauthorized: false },
-    connectionTimeout: 15000,
-    greetingTimeout: 15000,
-    socketTimeout: 20000
-  });
-  return _transporter;
-}
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+const fromAddress = 'LaptopDoctor <onboarding@resend.dev>';
 
 async function sendMail(to, subject, html) {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.log('Email skipped (SMTP not configured):', subject);
+  if (!resend) {
+    console.log('Email skipped (RESEND_API_KEY not configured):', subject);
     return;
   }
   try {
-    const transporter = await getTransporter();
-    await transporter.sendMail({ from: fromAddress, to, subject, html });
-    console.log('Email sent:', subject, '->', to);
+    const { data, error } = await resend.emails.send({ from: fromAddress, to, subject, html });
+    if (error) {
+      console.error('Email error:', error.message);
+    } else {
+      console.log('Email sent:', subject, '->', to, '| id:', data.id);
+    }
   } catch (err) {
     console.error('Email error:', err.message);
-    _transporter = null;
   }
 }
 
